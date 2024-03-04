@@ -50,23 +50,23 @@ var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
 
 // For example keepers can only ShortPass or LongPass
 // Here 64, 64 represents the FIFA ShortPass and LongPass ratings for this particular player
-AtkKep = [pos[C] == 1]Kep_1(64, 64,X,C);
+AtkKep = [pos[C] == 1]Kep_1(64, 64,36,C);
 
 // Here for the defenders, the first 3 parameters are with respect to the ShortPass, LongPass, and prob. to lose the ball respectively 
 // The prob. to lose the ball for the attacking team's defenders was calculated based on the defending team forward's player ratings 
 // In particular, the probability to lose the ball was a weighted combination of the standing tackle, sliding tackle, and interception FIFA player ratings of the forwards
-AtkDef = [pos[R] == 1]Def(73, 71, 38, X, R) [] [pos[CR] == 1]Def(68, 63, 38, X, CR) [] [pos[CL] == 1]Def(68, 63, 38, X, CL) [] [pos[L] == 1]Def(72, 59, 38, X, L);
+AtkDef = [pos[R] == 1]Def(73, 71, 38, 41, R) [] [pos[CR] == 1]Def(68, 63, 38, 41, CR) [] [pos[CL] == 1]Def(68, 63, 38, 41, CL) [] [pos[L] == 1]Def(72, 59, 38, 41, L);
 
 // Similar to defenders, midfielders and forwards have their own specific parameters
 // See their processes below for more information on what those parameters are
 // The prob. to lose for the attacking team's midfielders is based on the defending team's midfielders
 // The prob. to lose for the attacking team's forwards is based on the defending team's defenders
-AtkMid = [pos[RL] == 1]Mid(79, 76, 74, 59, X, RL) [] [pos[C] == 1]Mid(83, 80, 57, 59, X, C) [] [pos[LR] == 1]Mid(78, 73, 75, 59, X, LR);
-AtkFor = [pos[RL] == 1]For(77, 75, 74, 77, 75, X, RL) [] [pos[C] == 1]For(75, 73, 66, 76, 75, X, C) [] [pos[LR] == 1]For(73, 65, 65, 69, 75, X, LR);
+AtkMid = [pos[RL] == 1]Mid(79, 76, 74, 59, 64, RL) [] [pos[C] == 1]Mid(83, 80, 57, 59, 64, C) [] [pos[LR] == 1]Mid(78, 73, 75, 59, 64, LR);
+AtkFor = [pos[RL] == 1]For(77, 75, 74, 77, 75, 30, RL) [] [pos[C] == 1]For(75, 73, 66, 76, 75, 30, C) [] [pos[LR] == 1]For(73, 65, 65, 69, 75, 30, LR);
 
 ///////////// HOME TEAM PLAYERS (Defending Team) /////////////
 // Home team defenders, midfielders and forwards are already implicitly "defending" via the prob. to lose the ball parameter
-DefKep = [pos[C] == 1]Kep_2(72, X, C);
+DefKep = [pos[C] == 1]Kep_2(72, 36, C);
 
 ///////////// Individual Positions /////////////
 // There is a guard to every action (e.g., shortPass) a player can take
