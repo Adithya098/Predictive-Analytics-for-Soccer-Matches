@@ -5,7 +5,7 @@ import pandas as pd
 from db import DatabaseConnection
 
 def main():
-
+    databaseConnection = DatabaseConnection()
     for csv_file in find_csv_files():
         # read the csv file and parse the link
         df = pd.read_csv(csv_file)
@@ -21,7 +21,7 @@ def main():
             attack_team = teams["attack_team"]
             
             # find the players corresponding to each team -> there is some inconsistency in team names
-            databaseConnection = DatabaseConnection()
+
             home_team_players = databaseConnection.get_players_by_club(home_team)
             attack_team_players = databaseConnection.get_players_by_club(attack_team_players)
         
