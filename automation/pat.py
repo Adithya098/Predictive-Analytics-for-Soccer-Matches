@@ -6,7 +6,7 @@ import re
 
 def execute_pat():
     print("Executing PAT")
-    model_directory = os.path.join("..", "Improved_soccer_model.pcsp")
+    model_directory = os.path.join(".", "rendered_template.pcsp")
     
     command = f"{PAT_CONSOLE_EXE_DIRECTORY} -pcsp {model_directory} {OUTPUT_FILE_DIRECTORY}"
     
