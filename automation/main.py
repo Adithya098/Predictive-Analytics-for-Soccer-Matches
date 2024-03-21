@@ -3,6 +3,9 @@ from crawl import send_request, find_teams
 from betting import find_csv_files
 import pandas as pd
 from db import DatabaseConnection
+from pprint import pprint
+from teams import find_most_similar
+from tqdm import tqdm
 
 def main():
     databaseConnection = DatabaseConnection()
@@ -15,20 +18,20 @@ def main():
             # find the teams
             soup = send_request(url)
             teams = find_teams(soup)
-            print(teams)
             
             home_team = teams["home_team"]
             attack_team = teams["attack_team"]
             
+            print(home_team, "->", find_most_similar(home_team))
+            print(attack_team, "->", find_most_similar(attack_team))
+
             # find the players corresponding to each team -> there is some inconsistency in team names
 
-            home_team_players = databaseConnection.get_players_by_club(home_team)
-            attack_team_players = databaseConnection.get_players_by_club(attack_team_players)
+            # home_team_players = databaseConnection.get_players_by_club(home_team)
+            # attack_team_players = databaseConnection.get_players_by_club(attack_team_players)
         
             
-            break #for now
-    
-    
+
 
     # generate pcsp file : TODO
     # execute pat

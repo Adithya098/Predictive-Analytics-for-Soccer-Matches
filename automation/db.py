@@ -23,10 +23,15 @@ class DatabaseConnection:
         rows = self.__cursor.fetchall()
         return rows
     
+    
+    def test(self):
+        self.__cursor.execute('SELECT mentality_composure FROM my_table WHERE mentality_composure == 0')
+        rows = self.__cursor.fetchall()
+        pprint(rows)
     def __del__(self):
         self.__connection.close()
 
 
 if __name__ == "__main__":
     db = DatabaseConnection()
-    pprint(db.get_all_clubs())
+    pprint(db.test())
