@@ -16,9 +16,15 @@ class DatabaseConnection:
     def get_players_by_club(self, club_name : str):
         self.__cursor.execute("SELECT * FROM my_table WHERE club_name = ?", (club_name,))
         rows = self.__cursor.fetchall()
+        processed_rows = []
+        for row in rows:
+            processed_rows.append([0 if value is None else value for value in row])
+
+
         columns = [column[0] for column in self.__cursor.description]
         
-        return [dict(zip(columns, row) )for row in rows]
+        
+        return [dict(zip(columns, processed_row) )for processed_row in processed_rows]
 
     def get_all_clubs(self):
         self.__cursor.execute("SELECT DISTINCT club_name FROM my_table")

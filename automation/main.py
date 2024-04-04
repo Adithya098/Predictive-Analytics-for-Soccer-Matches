@@ -36,7 +36,6 @@ def main():
             
             
             home_team_players = databaseConnection.get_players_by_club(home_team)
-            print(home_team_players)
             attack_team_players = databaseConnection.get_players_by_club(attack_team)
         
             # generate pcsp file : TODO: correctly match parameters
