@@ -47,14 +47,14 @@ def main():
             execute_pat()
             output = read_output_file()
             
+            input()
             
             delete_output_file()
             
             #remove render
             remove_render()
             
-            
-            
+        
             print(output)
             # parse the output
             parsed_output = parse_output(output)
