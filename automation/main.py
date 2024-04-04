@@ -31,7 +31,10 @@ def main():
             print(attack_team, "->", find_most_similar(attack_team))
 
             # find the players corresponding to each team -> there is some inconsistency in team names
-
+            home_team = find_most_similar(home_team)
+            attack_team = find_most_similar(attack_team)
+            
+            
             home_team_players = databaseConnection.get_players_by_club(home_team)
             attack_team_players = databaseConnection.get_players_by_club(attack_team)
         
@@ -50,6 +53,7 @@ def main():
             #remove render
             remove_render()
             
+            print(output)
             # parse the output
             parsed_output = parse_output(output)
             

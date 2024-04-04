@@ -38,9 +38,12 @@ enum {ATKKEPPOS, DEFKEPPOS, OTHER};
 // Soccer field grid
 // 1 means there is a player in that position
 // 0 means there is no player in that position
+
+// Midfielders consist of 2 lines --> atkMidbwd and atkMidFwd
 var atkKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
 var atkDefPos = [-1(6), 1, 0, 1, 0, 1, 0, 1, -1(6)];
-var atkMidPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
+var atkMidBwdPos = [-1(6), 0, 0, 1, 0, 1, 0, 0, -1(6)]; 
+var atkMidFwdPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
 var atkForPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
 var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
 
@@ -61,6 +64,8 @@ AtkDef = [pos[R] == 1]Def({{ShortPass_AtkDef_r}}, {{LongPass_AtkDef_r}}, {{BallL
 // See their processes below for more information on what those parameters are
 // The prob. to lose for the attacking team's midfielders is based on the defending team's midfielders
 // The prob. to lose for the attacking team's forwards is based on the defending team's defenders
+AtkMidBwd = [pos[CL] == 1]Mid(79, 76, 74, 59, 64, CL) [] [pos[CR] == 1]Mid(83, 80, 57, 59, 64, CR);
+AtkMidFwd = [pos[RL] == 1]Mid(79, 76, 74, 59, 64, RL) [] [pos[C] == 1]Mid(83, 80, 57, 59, 64, C) [] [pos[LR] == 1]Mid(78, 73, 75, 59, 64, LR);
 AtkMid = [pos[RL] == 1]Mid({{ShortPass_AtkMid_rl}}, {{LongPass_AtkMid_rl}}, {{LongShot_AtkMid_rl}}, {{LoseBall_AtkMid_rl}}, {{Mental_AtkMid_rl}}, RL) [] [pos[C] == 1]Mid({{ShortPass_AtkMid_c}}, {{LongPass_AtkMid_c}}, {{LongShot_AtkMid_c}}, {{LoseBall_AtkMid_c}}, {{Mental_AtkMid_c}}, C) [] [pos[LR] == 1]Mid({{ShortPass_AtkMid_lr}}, {{LongPass_AtkMid_lr}}, {{LongShot_AtkMid_lr}}, {{LoseBall_AtkMid_lr}}, {{Mental_AtkMid_lr}},LR);
 AtkFor = [pos[RL] == 1]For({{Fin_AtkFor_RL}}, {{LongShot_AtkFor_RL}}, {{Volley_AtkFor_RL}}, {{Heading_AtkFor_RL}}, {{LoseBall_AtkFor_RL}}, {{Mental_AtkFor_RL}}, RL) [] [pos[C] == 1]For({{Fin_AtkFor_C}}, {{LongShot_AtkFor_C}}, {{Volley_AtkFor_C}}, {{Heading_AtkFor_C}}, {{LoseBall_AtkFor_C}}, {{Mental_AtkFor_C}},C) [] [pos[LR] == 1]For({{Fin_AtkFor_LR}}, {{LongShot_AtkFor_LR}}, {{Volley_AtkFor_LR}}, {{Heading_AtkFor_LR}}, {{LoseBall_AtkFor_LR}}, {{Mental_AtkFor_LR}}, LR);
 
@@ -85,14 +90,42 @@ Kep_1(i, j, f, p) = [atkDefPos[p-2] == 1 || atkDefPos[p-1] == 1 || atkDefPos[p] 
 	100-j: intercepted{danger = 5;} -> Skip
 };
 
-
-Def(i, j, k, f, p) = [atkMidPos[p-2] == 1 || atkMidPos[p-1] == 1 || atkMidPos[p] == 1 || atkMidPos[p+1] == 1 || atkMidPos[p+2] == 1]shortPass -> pcase {
-	i: pass -> UpdatePos(p, SP); AtkMid
+// Def player can pass on the ball to either atkMidBwd player or AtkMidFwd player
+Def(i, j, k, f, p) = [atkMidBwdPos[p-2] == 1 || atkMidBwdPos[p-1] == 1 || atkMidBwdPos[p] == 1 || atkMidBwdPos[p+1] == 1 || atkMidBwdPos[p+2] == 1]shortPass -> pcase {
+	i: pass -> UpdatePos(p, SP); AtkMidBwd
 	k: tackled{danger = 4;} -> Skip
 	f: Foul(PS, DEF, OTHER)
-} [] [atkMidPos[p-6] == 1 || atkMidPos[p-5] == 1 || atkMidPos[p-4] == 1 || atkMidPos[p-3] == 1 || atkMidPos[p+3] == 1 || atkMidPos[p+4] == 1 || atkMidPos[p+5] == 1 || atkMidPos[p+6] == 1]longPass -> pcase {
-	j: pass -> UpdatePos(p, LP); AtkMid
+}[][atkMidBwdPos[p-6] == 1 || atkMidBwdPos[p-5] == 1 || atkMidBwdPos[p-4] == 1 || atkMidBwdPos[p-3] == 1 || atkMidBwdPos[p+3] == 1 || atkMidBwdPos[p+4] == 1 || atkMidBwdPos[p+5] == 1 || atkMidBwdPos[p+6] == 1]longPass -> pcase {
+	j: pass -> UpdatePos(p, LP); AtkMidBwd
 	k: tackled{danger = 4;} -> Skip
+	f: Foul(PS, DEF, OTHER)
+}[] [atkMidFwdPos[p-2] == 1 || atkMidFwdPos[p-1] == 1 || atkMidFwdPos[p] == 1 || atkMidFwdPos[p+1] == 1 || atkMidFwdPos[p+2] == 1]shortPass -> pcase {
+	i: pass -> UpdatePos(p, SP); AtkMidFwd
+	k: tackled{danger = 4;} -> Skip
+	f: Foul(PS, DEF, OTHER)
+}[] [atkMidFwdPos[p-6] == 1 || atkMidFwdPos[p-5] == 1 || atkMidFwdPos[p-4] == 1 || atkMidFwdPos[p-3] == 1 || atkMidFwdPos[p+3] == 1 || atkMidFwdPos[p+4] == 1 || atkMidFwdPos[p+5] == 1 || atkMidFwdPos[p+6] == 1]longPass -> pcase {
+	j: pass -> UpdatePos(p, LP); AtkMidFwd
+	k: tackled{danger = 4;} -> Skip
+	f: Foul(PS, DEF, OTHER)
+};
+
+
+// MidBwd player can pass on the ball to either the Midfwd player or the AtkFor player
+MidBwd(i, j, k, l, f, p) = [atkMidFwdPos[p-2] == 1 || atkMidFwdPos[p-1] == 1 || atkMidFwdPos[p] == 1 || atkMidFwdPos[p+1] == 1 || atkMidFwdPos[p+2] == 1]shortPass -> pcase {
+	i: pass -> UpdatePos(p, SP); AtkMidFwd
+	l: tackled{danger = 3;} -> Skip
+	f: Foul(PS, DEF, OTHER)
+} [] [atkMidFwdPos[p-6] == 1 || atkMidFwdPos[p-5] == 1 || atkMidFwdPos[p-4] == 1 || atkMidFwdPos[p-3] == 1 || atkMidFwdPos[p+3] == 1 || atkMidFwdPos[p+4] == 1 || atkMidFwdPos[p+5] == 1 || atkMidFwdPos[p+6] == 1]longPass -> pcase {
+	j: pass{inAir = true;} -> UpdatePos(p, LP); AtkMidFwd
+	l: tackled{danger = 3;} -> Skip
+	f: Foul(PS, DEF, OTHER)
+} [] [atkForPos[p-2] == 1 || atkForPos[p-1] == 1 || atkForPos[p] == 1 || atkForPos[p+1] == 1 || atkForPos[p+2] == 1]shortPass -> pcase {
+	i: pass -> UpdatePos(p, SP); AtkFor
+	l: tackled{danger = 3;} -> Skip
+	f: Foul(PS, DEF, OTHER)
+} [] [atkForPos[p-6] == 1 || atkForPos[p-5] == 1 || atkForPos[p-4] == 1 || atkForPos[p-3] == 1 || atkForPos[p+3] == 1 || atkForPos[p+4] == 1 || atkForPos[p+5] == 1 || atkForPos[p+6] == 1]longPass -> pcase {
+	j: pass{inAir = true;} -> UpdatePos(p, LP); AtkFor
+	l: tackled{danger = 3;} -> Skip
 	f: Foul(PS, DEF, OTHER)
 };
 
