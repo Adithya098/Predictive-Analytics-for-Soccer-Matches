@@ -53,6 +53,8 @@ def main():
             #remove render
             remove_render()
             
+            
+            
             print(output)
             # parse the output
             parsed_output = parse_output(output)
