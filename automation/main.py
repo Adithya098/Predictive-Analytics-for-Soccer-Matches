@@ -47,22 +47,23 @@ def main():
             execute_pat()
             output = read_output_file()
             
-            input()
             
             delete_output_file()
             
             #remove render
             remove_render()
             
-        
-            print(output)
             # parse the output
             parsed_output = parse_output(output)
+            
             
             softmax = calculate_softmax(parsed_output)
             
             # output the result to the excel file : TODO
             probabilities_df = probabilities_df.append({"match_url": url, "home_prob_softmax": softmax}, ignore_index=True)
+            
+            print(softmax)
+            
 
         probabilities_df.to_csv(get_probability_file_name(csv_file), index=False)
 if __name__ == "__main__":
