@@ -71,8 +71,9 @@ def main():
                 probabilities_df = probabilities_df.append({"match_url": url, "home_prob_softmax": softmax}, ignore_index=True)
                 
                 # print(softmax)
-            except Exception:
-                print("ERROR:", row)
+            except Exception as e:
+                print("\nERROR:", row)
+                raise e
                 continue
 
         probabilities_df.to_csv(get_probability_file_name(csv_file), index=False)
