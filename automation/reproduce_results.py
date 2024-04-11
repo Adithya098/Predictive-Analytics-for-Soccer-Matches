@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 def run_sampling_experiment(template_file : str = "template.txt"):
     subprocess.run(f"python main.py -s -t {template_file}", shell=True)
@@ -7,7 +8,7 @@ def run_whole_experiment(template_file : str = "template.txt"):
     subprocess.run(f"python main.py -t {template_file}", shell=True)
     
 def main():
-    sampling_models = ["template.txt"]
+    sampling_models = [os.path.join("isolated_feature_templates", "Improved_soccer_model_f2_gridExpansion.txt.txt"), os.path.join("isolated_feature_templates", "Improved_soccer_model_f2_gridExpansion.txt")]
     
     print("running experiments for isolated features")
     for model in sampling_models:
