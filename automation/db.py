@@ -3,7 +3,7 @@ from pprint import pprint
 
 class DatabaseConnection:
     def __init__(self) -> None:
-        self.__connection = sqlite3.connect('my_database2.db')
+        self.__connection = sqlite3.connect('my_database.db')
         self.__cursor = self.__connection.cursor()
 
     def get_player_by_name(self, long_name : str):

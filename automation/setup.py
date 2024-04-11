@@ -1,27 +1,65 @@
 import requests
+import os
+import zipfile
+import subprocess
 
-def download_file(url, target_path):
-    # Send a GET request to the URL
-    response = requests.get(url, stream=True)
 
-    # Check if the request was successful (status code 200)
+
+
+def download_file(url, destination):
+    """Download a file from a web URL to a local destination."""
+    response = requests.get(url)
     if response.status_code == 200:
-        # Open a local file for writing in binary mode
-        with open(target_path, 'wb') as out_file:
-            # Write the contents of the response to the file in chunks
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:  # filter out keep-alive new chunks
-                    out_file.write(chunk)
-        print("File downloaded successfully!")
+        # Open the destination file and write the contents of the response
+        with open(destination, "wb") as file:
+            file.write(response.content)
+        print("Download completed successfully!")
     else:
-        print("Failed to retrieve the file. Status code:", response.status_code)
+        print("Failed to download file, status code:", response.status_code)
+        
+def check_folder_exists(folder_path):
+    if os.path.exists(folder_path) and os.path.isdir(folder_path):
+        return True
+    else:
+        return False
 
+def unzip_file(zip_path, extract_to=None):
+    """Unzip a zip file.
+    
+    Args:
+    zip_path (str): The path to the .zip file to extract.
+    extract_to (str, optional): The directory to extract the files into. If not specified,
+                                the files will be extracted into the same directory as the zip file.
+    
+    Returns:
+    None
+    """
+    if extract_to is None:
+        extract_to = os.path.dirname(zip_path)
+    
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to)
+        print(f"Files extracted to: {extract_to}")
+
+
+def main():
+    print("install database file from this link: https://drive.google.com/file/d/12KGqHGtu-kQcwg6PEE2Qkst3KDQ1-khF/view?usp=share_link")
+    input("Press any key to continue after downloading and place it in the working directory\n")
+
+    if not check_folder_exists("betting_dataset"):   
+        # URL for direct download
+        download_url = "https://drive.google.com/uc?export=download&id=1AXvhfb6A3bY5E71uz3GW--toAKFlPJoe"
+
+        # Local path where the file will be saved (update this to your desired path)
+        save_path = "file.zip"
+
+        # Download the file
+        download_file(download_url, save_path)
+
+        unzip_file("file.zip")
+
+    subprocess.run("pip install -r requirements.txt", shell=True)
+    
 if __name__ == "__main__":
-    # Ensure the Dropbox URL ends with '?dl=1' to promote automatic downloads
-    download_url = "https://docs.google.com/document/d/1YhV7scN75xdyCvy8u1LMhbuOpJcyhYJKPy8_I4gpfmw/export?format=doc"
-    
-    # Local path where the file will be saved
-    save_path = "test.doc"
-    
-    # Download the file
-    download_file(download_url, save_path)
+    main()
+
