@@ -5,7 +5,7 @@ import platform
 import re
 
 def execute_pat():
-    print("Executing PAT")
+    # print("Executing PAT")
     model_directory = os.path.join(".", "rendered_template.pcsp")
     
     command = f"{PAT_CONSOLE_EXE_DIRECTORY} -pcsp {model_directory} {OUTPUT_FILE_DIRECTORY}"
@@ -14,7 +14,7 @@ def execute_pat():
         command = f"mono {command}"
         
     child_process = subprocess.run(command.split(" "), check=True, capture_output=True)
-    print(child_process.stdout.decode("utf-8"))
+    # print(child_process.stdout.decode("utf-8"))
 
 def read_output_file():
     with open(OUTPUT_FILE_DIRECTORY, "r") as file:
@@ -32,9 +32,9 @@ def parse_output(output):
     for match in matches:
         goal = match[0]
         prob_range = [float(match[1]), float(match[2])]
-        print("Goal:", goal)
-        print("Probability Range:", prob_range)
-        print()
+        # print("Goal:", goal)
+        # print("Probability Range:", prob_range)
+        # print()
         result[goal] = prob_range
     
     return result
