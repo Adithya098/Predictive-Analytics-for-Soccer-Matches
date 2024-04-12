@@ -50,7 +50,7 @@ def main():
                 attack_team_players = databaseConnection.get_players_by_club(attack_team)
             
                 initialize_params(home_team_players, attack_team_players)
-                rendered_template = render()
+                rendered_template = render(args.template)
                 save_file(rendered_template)
                 
                 # execute pat

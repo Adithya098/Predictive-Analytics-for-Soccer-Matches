@@ -83,11 +83,13 @@ parameters = {
     "Mental_AtkMidFwd_lr" : 0,
 }
 
+
+
 def change_parameter(parameter, value):
     parameters[parameter] = value
 
-def render():
-    with open(os.path.join(".", "template.txt"), "r") as file:
+def render(template : str):
+    with open(os.path.join(".", template), "r") as file:
         template_str = file.read()
         
     template = Template(template_str)

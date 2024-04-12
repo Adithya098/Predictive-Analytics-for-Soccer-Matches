@@ -3,6 +3,7 @@ import subprocess
 import os
 import platform
 import re
+import time
 
 def execute_pat():
     # print("Executing PAT")
