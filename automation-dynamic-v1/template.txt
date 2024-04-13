@@ -1,4 +1,4 @@
-﻿// NOTE: This will only produce probabilities of goal when the away team attacks while the home team defends 
+// NOTE: This will only produce probabilities of goal when the away team attacks while the home team defends 
 // A similar pcsp file will have to be generated from the home team POV to meaningfully compare which team has the higher chance of scoring during an attack
 /*
 
@@ -51,17 +51,17 @@ var defDefLineFoulCount = 0;
 // dynamic cal in python
 // avg(diving + reflex rating of opp keeper)
 // 84 | 88 = > 86
-#define defKeeperSaveRating 86;
+#define defKeeperSaveRating {{awayTeamKeeperSaveRating}};
 
 // dynamic cal in python
 // max(all atk players penalty rating)
 // i.e. considering the best penalty taker will always take the penalty
-#define atkForPenaltyRating 80;
+#define atkForPenaltyRating {{homeTeamPenaltyRating}};
 
 // dynamic cal in python
 // max(all atk players freekick rating)
 // i.e. considering the best free kick taker will always take the freekick
-#define atkForFreeKickRating 77;
+#define atkForFreeKickRating {{homeTeamFreeKickRating}};
 
 // Grid of eligible positions that can receive the ball
 // This will change based on the previous position and the action taken
@@ -88,16 +88,17 @@ enum {SP, LP, LS, FI, VO, HD};
 // Attack Line, Mid Line, Defense Line
 enum {AL, ML, DL};
 
+// Match URL: https://www.premierleague.com/match/12115
 
 // Soccer field grid
 // 1 means there is a player in that position
 // 0 means there is no player in that position
 // 4-4-2
-var atkKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
-var atkDefPos = [-1(6), 1, 0, 1, 0, 1, 0, 1, -1(6)];
-var atkMidPos = [-1(6), 1, 0, 1, 0, 1, 0, 1, -1(6)];
-var atkForPos = [-1(6), 0, 0, 1, 0, 1, 0, 0, -1(6)];
-var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
+var atkKepPos = [-1(6), {{formationAttGK}}, -1(6)];
+var atkDefPos = [-1(6), {{formationAttDL}}, -1(6)];
+var atkMidPos = [-1(6), {{formationAttML}}, -1(6)];
+var atkForPos = [-1(6), {{formationAttFL}}, -1(6)];
+var defKepPos = [-1(6), {{formationDefGK}}, -1(6)];
 
 ///////////// AWAY TEAM PLAYERS (Attacking Team) /////////////
 // The parameters represent the probabilities specific to the player 
@@ -105,31 +106,31 @@ var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
 
 // For example keepers can only ShortPass or LongPass
 // Here 64, 64 represents the FIFA ShortPass and LongPass ratings for this particular player
-AtkKep = [pos[C] == 1]Kep_1(74, 82,C);
+AtkKep = {{homeGkCodeLine}};
 
 // Here for the defenders, the first 3 parameters are with respect to the ShortPass, LongPass, and prob. to lose, avg agression rating the ball respectively 
 // The prob. to lose the ball for the attacking team's defenders was calculated based on the defending team forward's player ratings 
 // In particular, the probability to lose the ball was a weighted combination of the standing tackle, sliding tackle, and interception FIFA player ratings of the forwards
 // In particular, the probability of getting foul was a weighted combination of the agression FIFA player ratings of the defending team forward players
-AtkDef = [pos[R] == 1]Def(77, 72, 37, 90,R) [] [pos[CR] == 1]Def(69, 65, 37, 90,CR) [] [pos[CL] == 1]Def(54, 62, 37, 90,CL) [] [pos[L] == 1]Def(74, 76, 37, 90,L);
+AtkDef = {{homeDefCodeLine}};
 
 // Similar to defenders, midfielders and forwards have their own specific parameters
 //longpass,shortpass and longshort
 // See their processes below for more information on what those parameters are
 // The prob. to lose for the attacking team's midfielders is based on the defending team's midfielders
 // The prob. of getting foul for the attacking team's midfielders is based on the defending team's midfielders
-AtkMid = [pos[R] == 1]Mid(56, 65, 63, 53, 52,R) [] [pos[CR] == 1]Mid(72, 68, 74, 53, 52,CR) [] [pos[CL] == 1]Mid(78, 76, 61, 53, 52,CL) [] [pos[L] == 1]Mid(73, 66, 62, 53, 52,L);
+AtkMid = {{homeMidCodeLine}};
 
 // shortpass, longpass
 // attackingfinish,longshot,volley,header,
 // The prob. to lose for the attacking team's forwards is based on the defending team's defenders
 // The prob. of getting foul for the attacking team's forwards is based on the defending team's defenders
-AtkFor = [pos[CR] == 1]For(64, 41, 73, 62, 67, 68, 83, 82,CR) [] [pos[CL] == 1]For(70, 62, 74, 60, 51, 43, 83, 82,CL);
+AtkFor = {{homeAttkCodeLine}};
 
 ///////////// HOME TEAM PLAYERS (Defending Team) /////////////
 // Home team defenders, midfielders and forwards are already implicitly "defending" via the prob. to lose the ball parameter
 // avg of gk diving & gk reflex to see gk rating be able to save a goal
-DefKep = [pos[C] == 1]Kep_2(86,C);
+DefKep = {{awayGkCodeLine}};
 
 ///////////// Individual Positions /////////////
 // There is a guard to every action (e.g., shortPass) a player can take
