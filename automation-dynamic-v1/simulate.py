@@ -9,12 +9,14 @@
 # To run the file, first install pandas, then simply: python simulate.py
 
 import pandas as pd
+from config import BETTING_SIMULATION_DIR
+import os
 
 def simulate_betting(season):
-    df_betting = pd.read_csv(f"betting_dataset/filtered_bets/{season}.csv")
-    df_original = pd.read_csv(f"betting_dataset/filtered_original_probabilities/{season}.csv")
-    df_new = pd.read_csv(f"betting_dataset/new_probabilities/{season}.csv")
-    
+  
+    df_betting = pd.read_csv(os.path.join(BETTING_SIMULATION_DIR, f"betting_dataset/{season}.csv"))
+    df_original = pd.read_csv(os.path.join(BETTING_SIMULATION_DIR, f"original_probabilities/{season}.csv"))
+    df_new = pd.read_csv(os.path.join(BETTING_SIMULATION_DIR, f"new_probabilities/{season}.csv"))
     
     # bet $100 for every match
     original_net, new_net = 0, 0
@@ -24,10 +26,15 @@ def simulate_betting(season):
         away_odds = row['B365A']
         draw_odds = row['B365D']
         # 0 = home_win, 1 = away_win, 2 = draw
-        result = row['result']
 
+        result = row['result']
         original_home_prob = df_original.loc[df_original['match_url'] == match_url]['home_prob_softmax'].values[0]
-        new_home_prob = df_new.loc[df_new['match_url'] == match_url]['home_prob_softmax'].values[0]
+        new_home_prob = df_new.loc[df_new['match_url'] == match_url]['home_prob_softmax']
+
+        if(new_home_prob.empty):
+            continue
+        else:
+            new_home_prob = new_home_prob.values[0]
 
         # predict draw
         if abs((1-original_home_prob) - original_home_prob) < 0.001:
