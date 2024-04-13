@@ -28,53 +28,57 @@ def main():
         
         for _, row in tqdm(df.iterrows(), total=df.shape[0], desc="Processing rows", leave=False):
             
-            try:
-                url = row['match_url']
-                
-                # find the teams
-                soup = send_request(url)
-                teams = find_teams(soup)
-                
-                home_team = teams["home_team"]
-                attack_team = teams["attack_team"]
-                
-                # print(home_team, "->", find_most_similar(home_team))
-                # print(attack_team, "->", find_most_similar(attack_team))
-
-                # find the players corresponding to each team -> there is some inconsistency in team names
-                home_team = find_most_similar(home_team)
-                attack_team = find_most_similar(attack_team)
-                
-                
-                home_team_players = databaseConnection.get_players_by_club(home_team)
-                attack_team_players = databaseConnection.get_players_by_club(attack_team)
+            request_success = False
             
-                initialize_params(home_team_players, attack_team_players)
-                rendered_template = render(args.template)
-                save_file(rendered_template)
-                
-                # execute pat
-                execute_pat()
-                output = read_output_file()
-                
-                
-                delete_output_file()
-                
-                #remove render
-                remove_render()
-                
-                # parse the output
-                parsed_output = parse_output(output)
-                
-                softmax = calculate_softmax(parsed_output)
-                
-                probabilities_df = probabilities_df.append({"match_url": url, "home_prob_softmax": softmax}, ignore_index=True)
-                
-                # print(softmax)
-            except Exception as e:
-                print("\nERROR:", row)
-                raise e
-                continue
+            while request_success == False:
+                try:
+                    url = row['match_url']
+                    request_success = True
+                except Exception as e:
+                    continue
+            
+            # find the teams
+            soup = send_request(url)
+            teams = find_teams(soup)
+            
+            home_team = teams["home_team"]
+            attack_team = teams["attack_team"]
+            
+            # print(home_team, "->", find_most_similar(home_team))
+            # print(attack_team, "->", find_most_similar(attack_team))
+
+            # find the players corresponding to each team -> there is some inconsistency in team names
+            home_team = find_most_similar(home_team)
+            attack_team = find_most_similar(attack_team)
+            
+            
+            home_team_players = databaseConnection.get_players_by_club(home_team)
+            attack_team_players = databaseConnection.get_players_by_club(attack_team)
+        
+            initialize_params(home_team_players, attack_team_players)
+            rendered_template = render(args.template)
+            save_file(rendered_template)
+            
+            # execute pat
+            execute_pat()
+            output = read_output_file()
+
+            
+            delete_output_file()
+            
+            #remove render
+            remove_render()
+            
+            # parse the output
+            parsed_output = parse_output(output)
+            print(parsed_output)
+            
+            softmax = calculate_softmax(parsed_output)
+            
+            probabilities_df = probabilities_df.append({"match_url": url, "home_prob_softmax": softmax}, ignore_index=True)
+            
+            # print(softmax)
+
 
         probabilities_df.to_csv(get_probability_file_name(csv_file), index=False)
         

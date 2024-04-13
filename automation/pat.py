@@ -9,13 +9,14 @@ def execute_pat():
     # print("Executing PAT")
     model_directory = os.path.join(".", "rendered_template.pcsp")
     
-    command = f"{PAT_CONSOLE_EXE_DIRECTORY} -pcsp {model_directory} {OUTPUT_FILE_DIRECTORY}"
+    command = f"{PAT_CONSOLE_EXE_DIRECTORY} -v -pcsp {model_directory} {OUTPUT_FILE_DIRECTORY}"
     
     if platform.system() == "Darwin":
         command = f"mono {command}"
         
     child_process = subprocess.run(command.split(" "), check=True, capture_output=True)
     # print(child_process.stdout.decode("utf-8"))
+    # print(child_process.stderr.decode("utf-8"))
 
 def read_output_file():
     with open(OUTPUT_FILE_DIRECTORY, "r") as file:
@@ -25,7 +26,7 @@ def delete_output_file():
     os.remove(OUTPUT_FILE_DIRECTORY)
 
 def parse_output(output):
-    pattern =  r"F G (\w+) with prob.*?\[(\d+\.\d+),\s*(\d+\.\d+)\]"
+    pattern =  r"F G (\w+) with prob.*?\[(-*\d+\.-*\d+),\s*(-*\d+\.-*\d+)\]"
 
     matches = re.findall(pattern, output)
     result = dict()

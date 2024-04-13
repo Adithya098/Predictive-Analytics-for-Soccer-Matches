@@ -68,6 +68,8 @@ AtkFor = [pos[RL] == 1]For({{Fin_AtkFor_RL}}, {{LongShot_AtkFor_RL}}, {{Volley_A
 // Home team defenders, midfielders and forwards are already implicitly "defending" via the prob. to lose the ball parameter
 DefKep = [pos[C] == 1]Kep_2({{Save_DefKep}}, {{Mental_DefKep}}, C);
 
+AtkKep = [pos[C] == 1]Kep_1({{ShortPass_AtkKep}}, {{LongPass_DefKep}}, {{Mental_DefKep}}, C);
+
 ///////////// Individual Positions /////////////
 // There is a guard to every action (e.g., shortPass) a player can take
 // The guard makes sure that there are players eligible to receive the ball should that action happen

@@ -55,7 +55,6 @@ parameters = {
     'LoseBall_AtkFor_LR' : 0,
     'Mental_AtkFor_LR' : 0,
     'Save_DefKep' : 0,
-    'Mental_DefKep' : 0,
     "ShortPass_AtkMidBwd_cl": 0, 
     "LongPass_AtkMidBwd_cl": 0, 
     "LongShot_AtkMidBwd_cl": 0, 
@@ -113,7 +112,7 @@ def initialize_attack_team_params(attack_team_players):
             if position == "GK":
                 parameters["ShortPass_AtkKep"] = int(player["attacking_short_passing"])
                 parameters["LongPass_DefKep"] = int(player["skill_long_passing"])
-                parameters["Mental_DefKep"] = int(player["mentality_composure"])
+                parameters["Mental_AtkKep"] = int(player["mentality_composure"])
             
             elif position == "LB":
                 parameters["ShortPass_AtkDef_l"] = int(player["attacking_short_passing"])
@@ -263,41 +262,10 @@ def initialize_home_team_params(home_team_players):
         
         for position in player_positions:
             if position == "GK":
-                parameters["ShortPass_AtkKep"] = int(player["attacking_short_passing"])
-                parameters["LongPass_DefKep"] = int(player["skill_long_passing"])
+                parameters["Save_DefKep"] = int(int(player["goalkeeping_diving"]) + int(player["goalkeeping_handling"]) + int(player["goalkeeping_kicking"]) +  int(player["goalkeeping_positioning"]) +  int(player["goalkeeping_reflexes"]) / 4)
                 parameters["Mental_DefKep"] = int(player["mentality_composure"])
             
-            elif position == "LCB":
-                parameters["ShortPass_AtkDef_cl"] = int(player["attacking_short_passing"])
-                parameters["LongPass_AtkDef_cl"] = int(player["skill_long_passing"])
-                parameters["BallLosePass_AtkDef_cl"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                parameters["Mental_AtkDef_cl"] = int(player["mentality_composure"])
-            
-            elif  position == "CB":
-                
-                if parameters["ShortPass_AtkDef_cl"] == 0:
-                    parameters["ShortPass_AtkDef_cl"] = int(player["attacking_short_passing"])
-                    parameters["LongPass_AtkDef_cl"] = int(player["skill_long_passing"])
-                    parameters["BallLosePass_AtkDef_cl"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                    parameters["Mental_AtkDef_cl"] = int(player["mentality_composure"])
-                else:
-                    parameters["ShortPass_AtkDef_cr"] = int(player["attacking_short_passing"])
-                    parameters["LongPass_AtkDef_cr"] = int(player["skill_long_passing"])
-                    parameters["BallLosePass_AtkDef_cr"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                    parameters["Mental_AtkDef_cr"] = int(player["mentality_composure"])
-                    
-            
-            elif  position == "LCB":
-                parameters["ShortPass_AtkDef_cr"] = int(player["attacking_short_passing"])
-                parameters["LongPass_AtkDef_cr"] = int(player["skill_long_passing"])
-                parameters["BallLosePass_AtkDef_cr"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                parameters["Mental_AtkDef_cr"] = int(player["mentality_composure"])
-            
-            elif position == "RB":
-                parameters["ShortPass_AtkDef_r"] = int(player["attacking_short_passing"])
-                parameters["LongPass_AtkDef_r"] = int(player["skill_long_passing"])
-                parameters["BallLosePass_AtkDef_r"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                parameters["Mental_AtkDef_r"] = int(player["mentality_composure"])
+          
             
                 
             
