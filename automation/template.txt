@@ -40,11 +40,11 @@ enum {ATKKEPPOS, DEFKEPPOS, OTHER};
 // 0 means there is no player in that position
 
 // Midfielders consist of 2 lines --> atkMidbwd and atkMidFwd
-var atkKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
-var atkDefPos = [-1(6), 1, 0, 1, 0, 1, 0, 1, -1(6)];
-var atkMidBwdPos = [-1(6), 0, 0, 1, 0, 1, 0, 0, -1(6)]; 
-var atkMidFwdPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
-var atkForPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
+var atkKepPos = [-1(6),{{atkKepPos}} -1(6)];
+var atkDefPos = [-1(6),{{atkDefPos}} -1(6)];
+var atkMidBwdPos = [-1(6), {{atkMidBwdPos}} -1(6)]; 
+var atkMidFwdPos = [-1(6), {{atkMidFwdPos}} -1(6)];
+var atkForPos = [-1(6), {{atkForPos}} -1(6)];
 var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
 
 ///////////// AWAY TEAM PLAYERS (Attacking Team) /////////////
