@@ -2,7 +2,7 @@ import subprocess
 import os
 
 def run_sampling_experiment(template_file : str = "template.txt"):
-    subprocess.run(f"python main.py -s -t {template_file}", shell=True)
+    subprocess.run(f"python main.py -t {template_file}", shell=True)
 
 def run_whole_experiment(template_file : str = "template.txt"):
     subprocess.run(f"python main.py -t {template_file}", shell=True)
@@ -17,6 +17,7 @@ def main():
     
     print("running experiments for isolated features")
     for model in sampling_models:
+        print("Running model - ",model)
         run_sampling_experiment(model)
     
     print("running experiment for complete model")
