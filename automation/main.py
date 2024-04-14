@@ -6,12 +6,24 @@ from db import DatabaseConnection
 from pprint import pprint
 from teams import find_most_similar
 from tqdm import tqdm
-from pcsp_generator import change_parameter, render, save_file, remove_render, initialize_params
+from pcsp_generator import change_parameter, render, save_file, remove_render, initialize_params, change_formation
 from softmax import calculate_softmax
 from probability import get_probability_file_name
 from cli import get_parser
 from config import SAMPLE_SIZE, RANDOM_SEED
 from simulate import simulate_betting
+
+
+def extract_years_from_path(file_path):
+    # Split the path and take the last part (filename)
+    filename = file_path.split('/')[-1]
+    # Extract the starting year part
+    start_year = filename.split('.')[0][0:2]
+    # Extract the ending year part
+    end_year = filename.split('.')[0][2:]
+    # Concatenate to form the '20162017' format
+    years = f"20{start_year}20{end_year}"
+    return years
 
 def main():
     parser = get_parser()
@@ -28,57 +40,55 @@ def main():
         
         for _, row in tqdm(df.iterrows(), total=df.shape[0], desc="Processing rows", leave=False):
             
-            request_success = False
-            
-            while request_success == False:
-                try:
-                    url = row['match_url']
-                    request_success = True
-                except Exception as e:
-                    continue
-            
-            # find the teams
-            soup = send_request(url)
-            teams = find_teams(soup)
-            
-            home_team = teams["home_team"]
-            attack_team = teams["attack_team"]
-            
-            # print(home_team, "->", find_most_similar(home_team))
-            # print(attack_team, "->", find_most_similar(attack_team))
+            try:
+                url = row['match_url']
+                
+                change_formation(extract_years_from_path(csv_file), url)
+                
+                # find the teams
+                soup = send_request(url)
+                teams = find_teams(soup)
+                
+                home_team = teams["home_team"]
+                attack_team = teams["attack_team"]
+                
+                # print(home_team, "->", find_most_similar(home_team))
+                # print(attack_team, "->", find_most_similar(attack_team))
 
-            # find the players corresponding to each team -> there is some inconsistency in team names
-            home_team = find_most_similar(home_team)
-            attack_team = find_most_similar(attack_team)
+                # find the players corresponding to each team -> there is some inconsistency in team names
+                home_team = find_most_similar(home_team)
+                attack_team = find_most_similar(attack_team)
+                
+                
+                home_team_players = databaseConnection.get_players_by_club(home_team)
+                attack_team_players = databaseConnection.get_players_by_club(attack_team)
             
-            
-            home_team_players = databaseConnection.get_players_by_club(home_team)
-            attack_team_players = databaseConnection.get_players_by_club(attack_team)
-        
-            initialize_params(home_team_players, attack_team_players)
-            rendered_template = render(args.template)
-            save_file(rendered_template)
-            
-            # execute pat
-            execute_pat()
-            output = read_output_file()
-
-            
-            delete_output_file()
-            
-            #remove render
-            remove_render()
-            
-            # parse the output
-            parsed_output = parse_output(output)
-            print(parsed_output)
-            
-            softmax = calculate_softmax(parsed_output)
-            
-            probabilities_df = probabilities_df.append({"match_url": url, "home_prob_softmax": softmax}, ignore_index=True)
-            
-            # print(softmax)
-
+                initialize_params(home_team_players, attack_team_players)
+                rendered_template = render(args.template)
+                save_file(rendered_template)
+                
+                # execute pat
+                execute_pat()
+                output = read_output_file()
+                
+                
+                delete_output_file()
+                
+                #remove render
+                # remove_render()
+                
+                # parse the output
+                parsed_output = parse_output(output)
+                
+                softmax = calculate_softmax(parsed_output)
+                
+                probabilities_df = probabilities_df.append({"match_url": url, "home_prob_softmax": softmax}, ignore_index=True)
+                
+                # print(softmax)
+            except Exception as e:
+                print("\nERROR:", row)
+                raise e
+                continue
 
         probabilities_df.to_csv(get_probability_file_name(csv_file), index=False)
         

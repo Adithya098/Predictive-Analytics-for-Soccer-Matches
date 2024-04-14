@@ -1,5 +1,6 @@
 from jinja2 import Template
 import os
+import pandas as pd
 
 parameters = {
     'ShortPass_AtkKep' : 0,
@@ -55,6 +56,7 @@ parameters = {
     'LoseBall_AtkFor_LR' : 0,
     'Mental_AtkFor_LR' : 0,
     'Save_DefKep' : 0,
+    'Mental_DefKep' : 0,
     "ShortPass_AtkMidBwd_cl": 0, 
     "LongPass_AtkMidBwd_cl": 0, 
     "LongShot_AtkMidBwd_cl": 0, 
@@ -80,7 +82,56 @@ parameters = {
     "LongShot_AtkMidFwd_lr": 0, 
     "LoseBall_AtkMidFwd_lr": 0, 
     "Mental_AtkMidFwd_lr" : 0,
+    "atkKepPos": " 0, 0, 0, 1, 0, 0, 0,",
+    "atkDefPos": "1, 0, 1, 0, 1, 0, 1,",
+    "atkMidBwdPos" :  "0, 0, 1, 0, 1, 0, 0,",
+    "atkMidFwdPos" : " 0, 1, 0, 1, 0, 1, 0,",
+    "atkForPos": "0, 1, 0, 1, 0, 1, 0,"
 }
+
+def group_list(numbers, items):
+    grouped = []
+    start = 0
+    for number in numbers:
+        end = start + number
+        grouped.append(tuple(items[start:end]))
+        start = end
+    return grouped
+
+formation_dfs = dict()
+def change_formation(season : str, url : str):
+    df = None
+    if season not in formation_dfs:
+        formation_dfs[season] = pd.read_csv(os.path.join("formations", f"epl_matches_{season}.csv"))
+    df = formation_dfs[season]
+        
+    matching_row = df[df['match_url'] == url]
+    away_formation = matching_row['away_formation'].iloc[0].split("-")
+    away_formation = [int(number) for number in away_formation]
+    away_sequence = matching_row['away_sequence'].iloc[0].split(",")
+    
+    away_sequence = group_list(away_formation, away_sequence)
+    
+    params = ["atkKepPos", "atkDefPos", "atkMidBwdPos", "atkMidFwdPos", "atkForPos"]
+    for param, row in zip(params, away_sequence):
+        positions = ["L", "LR", "CL", "C", "CR", "RL", "R"]
+        for elem in row:
+            positions = [1 if element == elem else element for element in positions]    
+        positions = [0 if isinstance(item, str) else item for item in positions]
+        positions = [str(item) for item in positions]
+        positions = ", ".join(positions) + ", "
+        parameters[param] = positions
+
+#     var atkKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
+# var atkDefPos = [-1(6), 1, 0, 1, 0, 1, 0, 1, -1(6)];
+# var atkMidBwdPos = [-1(6), 0, 0, 1, 0, 1, 0, 0, -1(6)]; 
+# var atkMidFwdPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
+# var atkForPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
+# var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
+    
+
+
+    
 
 
 
@@ -112,7 +163,7 @@ def initialize_attack_team_params(attack_team_players):
             if position == "GK":
                 parameters["ShortPass_AtkKep"] = int(player["attacking_short_passing"])
                 parameters["LongPass_DefKep"] = int(player["skill_long_passing"])
-                parameters["Mental_AtkKep"] = int(player["mentality_composure"])
+                parameters["Mental_DefKep"] = int(player["mentality_composure"])
             
             elif position == "LB":
                 parameters["ShortPass_AtkDef_l"] = int(player["attacking_short_passing"])
@@ -266,10 +317,11 @@ def initialize_home_team_params(home_team_players):
                 parameters["Mental_DefKep"] = int(player["mentality_composure"])
             
           
-            
-                
-            
 
 def initialize_params(home_team_players, attack_team_players):
     initialize_attack_team_params(attack_team_players)
     initialize_home_team_params(home_team_players)
+    
+
+if __name__ == "__main__":
+    change_formation("20152016", "https://www.premierleague.com/match/12313")

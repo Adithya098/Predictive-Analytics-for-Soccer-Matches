@@ -10,13 +10,12 @@ def run_whole_experiment(template_file : str = "template.txt"):
 def main():
     sampling_models = [
         os.path.join("isolated_feature_templates", "Improved_soccer_model_f1_penalty.txt"), 
-        os.path.join("isolated_feature_templates", "Improved_soccer_model_f2_freeKicks.txt"), 
-        os.path.join("isolated_feature_templates", "Improved_soccer_model_f3_gridExpansion.txt")
+        os.path.join("isolated_feature_templates", "Improved_soccer_model_f2_gridExpansion.txt"), 
+        os.path.join("isolated_feature_templates", "Improved_soccer_model_f1_penalty.txt")
         ]
     
     print("running experiments for isolated features")
     for model in sampling_models:
-        print("running with model:",model)
         run_sampling_experiment(model)
     
     print("running experiment for complete model")

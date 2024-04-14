@@ -16,8 +16,6 @@ def simulate_betting(season):
     df_new = pd.read_csv(f"betting_dataset/new_probabilities/{season}.csv")
     
     
-    
-
     # bet $100 for every match
     original_net, new_net = 0, 0
     for index, row in df_betting.iterrows():
