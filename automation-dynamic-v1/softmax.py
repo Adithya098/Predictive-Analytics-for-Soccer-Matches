@@ -3,9 +3,9 @@ import math
 
 def calculateSoftmax(homeTeamValues, awayTeamValues):
     
-    hHigh, hLow = homeTeamValues["Goal0"]
-    aHigh, aLow = awayTeamValues["Goal0"]
-
+    hLow, hHigh = homeTeamValues["Goal0"]
+    aLow, aHigh = awayTeamValues["Goal0"]
+    # print(hLow, hHigh,aLow, aHigh)
     result = [hHigh, aHigh]
     # Subtracting the maximum value for numerical stability
     max_val = max(result)
