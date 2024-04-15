@@ -163,7 +163,7 @@ Def(i, j, k, l, p) = [atkMidPos[p-2] == 1 || atkMidPos[p-1] == 1 || atkMidPos[p]
 	k: tackled{danger = 4;} -> CheckFoul(p, l, DL)
 };
 
-// can make only backward passes but can take forward shoot/finish but not pass
+// can make forward & backward passes
 Mid(i, j, k, l, m, p) = [atkForPos[p-2] == 1 || atkForPos[p-1] == 1 || atkForPos[p] == 1 || atkForPos[p+1] == 1 || atkForPos[p+2] == 1]shortForwardPass -> pcase {
 	i: pass{inAir = false;} -> UpdatePos(p, SP); AtkFor
 	l: tackled{danger = 3;} -> CheckFoul(p, m, ML)
@@ -181,6 +181,7 @@ Mid(i, j, k, l, m, p) = [atkForPos[p-2] == 1 || atkForPos[p-1] == 1 || atkForPos
 	l: tackled{danger = 3;} -> CheckFoul(p, m, ML)
 };
 
+// can make only backward passes but can take forward shoot/finish but not pass
 For(sp, lp, i, j, k, l, m, n, p) = [atkMidPos[p-2] == 1 || atkMidPos[p-1] == 1 || atkMidPos[p] == 1 || atkMidPos[p+1] == 1 || atkMidPos[p+2] == 1]shortBackwardPass -> pcase {
 	sp: pass{inAir = false;} -> UpdatePos(p, SP); AtkMid
 	m: tackled{danger = 2;} -> CheckFoul(p, n, AL)
