@@ -15,13 +15,14 @@ def main():
         os.path.join("isolated_feature_templates", "Improved_soccer_model_f4_backPass.txt")
     ]
     
+    print("running experiment for complete model")
+    run_whole_experiment()
+    
     print("running experiments for isolated features")
     for model in sampling_models:
         print("Running model - ",model)
         run_sampling_experiment(model)
     
-    print("running experiment for complete model")
-    run_whole_experiment()
 
 if __name__ == "__main__":
     main()
