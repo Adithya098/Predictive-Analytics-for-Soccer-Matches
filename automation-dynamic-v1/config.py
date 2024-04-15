@@ -2,11 +2,21 @@ import os
 
 # update these absolute paths according to ur system
 
-# absolute pat of PAT3.Console.exe file
+# ------
+# absolute path of PAT3.Console.exe file
+# if windows
 PAT_CONSOLE_EXE_DIRECTORY = "C:\\Program Files\\Process Analysis Toolkit\\Process Analysis Toolkit 3.5.1\\PAT3.Console-2.exe"
+# if linus/mac
+# PAT_CONSOLE_EXE_DIRECTORY = "/Users/alperen/Downloads/PAT_351/PAT3.Console-2.exe"
+# ------
 
-# absolute pat of this automation folder
+# ------
+# absolute path of this automation folder
+# if windows
 OUTPUT_DIRECTORY = "C:\\Users\\adith\\Desktop\\CS5232-Project\\automation-dynamic-v1"
+# if linus/mac
+# OUTPUT_FILE_DIRECTORY = "/Users/alperen/Projects/CS5232-Project/automation-dynamic-v1"
+# ------
 
 # ----
 BETTING_SIMULATION_DIR = os.path.join(".", "betting_simulation")
