@@ -40,11 +40,11 @@ enum {ATKKEPPOS, DEFKEPPOS, OTHER};
 // 0 means there is no player in that position
 
 // Midfielders consist of 2 lines --> atkMidbwd and atkMidFwd
-var atkKepPos = [-1(6),{{atkKepPos}} -1(6)];
-var atkDefPos = [-1(6),{{atkDefPos}} -1(6)];
-var atkMidBwdPos = [-1(6), {{atkMidBwdPos}} -1(6)]; 
-var atkMidFwdPos = [-1(6), {{atkMidFwdPos}} -1(6)];
-var atkForPos = [-1(6), {{atkForPos}} -1(6)];
+var atkKepPos = [-1(6),0, 0, 1, 1, 1, 0, 1,  -1(6)];
+var atkDefPos = [-1(6),1, 0, 0, 0, 1, 0, 0,  -1(6)];
+var atkMidBwdPos = [-1(6), 0, 0, 1, 1, 0, 1, 0,  -1(6)]; 
+var atkMidFwdPos = [-1(6), 0, 1, 0, 0, 0, 0, 0,  -1(6)];
+var atkForPos = [-1(6), 0, 0, 0, 1, 1, 0, 0,  -1(6)];
 var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
 
 ///////////// AWAY TEAM PLAYERS (Attacking Team) /////////////
@@ -53,26 +53,26 @@ var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
 
 // For example keepers can only ShortPass or LongPass
 // Here 64, 64 represents the FIFA ShortPass and LongPass ratings for this particular player
-AtkKep = [pos[C] == 1]Kep_1({{ShortPass_AtkKep}}, {{LongPass_DefKep}}, {{Mental_DefKep}}, C);
+AtkKep = [pos[C] == 1]Kep_1(24, 22, 0, C);
 
 // Here for the defenders, the first 3 parameters are with respect to the ShortPass, LongPass, and prob. to lose the ball respectively 
 // The prob. to lose the ball for the attacking team's defenders was calculated based on the defending team forward's player ratings 
 // In particular, the probability to lose the ball was a weighted combination of the standing tackle, sliding tackle, and interception FIFA player ratings of the forwards
-AtkDef = [pos[R] == 1]Def({{ShortPass_AtkDef_r}}, {{LongPass_AtkDef_r}}, {{BallLosePass_AtkDef_r}}, {{Mental_AtkDef_r}}, R) [] [pos[CR] == 1]Def({{ShortPass_AtkDef_cr}}, {{LongPass_AtkDef_cr}}, {{BallLosePass_AtkDef_cr}}, {{Mental_AtkDef_cr}}, CR) [] [pos[CL] == 1]Def({{ShortPass_AtkDef_cl}}, {{LongPass_AtkDef_cl}}, {{BallLosePass_AtkDef_cl}}, {{Mental_AtkDef_cl}}, CL) [] [pos[L] == 1]Def({{ShortPass_AtkDef_l}}, {{LongPass_AtkDef_l}}, {{BallLosePass_AtkDef_l}}, {{Mental_AtkDef_l}}, L);
+AtkDef = [pos[R] == 1]Def(72, 65, 74, 0, R) [] [pos[CR] == 1]Def(64, 52, 62, 0, CR) [] [pos[CL] == 1]Def(71, 68, 73, 74, CL) [] [pos[L] == 1]Def(64, 52, 62, 0, L);
 
 // Similar to defenders, midfielders and forwards have their own specific parameters
 // See their processes below for more information on what those parameters are
 // The prob. to lose for the attacking team's midfielders is based on the defending team's midfielders
 // The prob. to lose for the attacking team's forwards is based on the defending team's defenders
 
-AtkMidBwd = [pos[CL] == 1]Mid({{ShortPass_AtkMidBwd_cl}}, {{LongPass_AtkMidBwd_cl}}, {{LongShot_AtkMidBwd_cl}}, {{LoseBall_AtkMidBwd_cl}}, {{Mental_AtkMidBwd_cl}}, CL) [] [pos[CR] == 1]Mid({{ShortPass_AtkMidBwd_cr}}, {{LongPass_AtkMidBwd_cr}}, {{LongShot_AtkMidBwd_cr}}, {{LoseBall_AtkMidBwd_cl}}, {{Mental_AtkMidBwd_cr}}, CR);
-AtkMidFwd = [pos[RL] == 1]Mid({{ShortPass_AtkMidFwd_rl}}, {{LongPass_AtkMidFwd_rl}}, {{LongShot_AtkMidFwd_rl}}, {{LoseBall_AtkMidFwd_rl}}, {{Mental_AtkMidFwd_rl}}, RL) [] [pos[C] == 1]Mid({{ShortPass_AtkMidFwd_c}}, {{LongPass_AtkMidFwd_c}}, {{LongShot_AtkMidFwd_c}}, {{LoseBall_AtkMidFwd_c}}, {{Mental_AtkMidFwd_c}}, C) [] [pos[LR] == 1]Mid({{ShortPass_AtkMidFwd_lr}}, {{LongPass_AtkMidFwd_lr}}, {{LongShot_AtkMidFwd_lr}}, {{LoseBall_AtkMidFwd_lr}}, {{Mental_AtkMidFwd_lr}}, LR);
-AtkMid = [pos[RL] == 1]Mid({{ShortPass_AtkMid_rl}}, {{LongPass_AtkMid_rl}}, {{LongShot_AtkMid_rl}}, {{LoseBall_AtkMid_rl}}, {{Mental_AtkMid_rl}}, RL) [] [pos[C] == 1]Mid({{ShortPass_AtkMid_c}}, {{LongPass_AtkMid_c}}, {{LongShot_AtkMid_c}}, {{LoseBall_AtkMid_c}}, {{Mental_AtkMid_c}}, C) [] [pos[LR] == 1]Mid({{ShortPass_AtkMid_lr}}, {{LongPass_AtkMid_lr}}, {{LongShot_AtkMid_lr}}, {{LoseBall_AtkMid_lr}}, {{Mental_AtkMid_lr}},LR);
-AtkFor = [pos[RL] == 1]For({{Fin_AtkFor_RL}}, {{LongShot_AtkFor_RL}}, {{Volley_AtkFor_RL}}, {{Heading_AtkFor_RL}}, {{LoseBall_AtkFor_RL}}, {{Mental_AtkFor_RL}}, RL) [] [pos[C] == 1]For({{Fin_AtkFor_C}}, {{LongShot_AtkFor_C}}, {{Volley_AtkFor_C}}, {{Heading_AtkFor_C}}, {{LoseBall_AtkFor_C}}, {{Mental_AtkFor_C}},C) [] [pos[LR] == 1]For({{Fin_AtkFor_LR}}, {{LongShot_AtkFor_LR}}, {{Volley_AtkFor_LR}}, {{Heading_AtkFor_LR}}, {{LoseBall_AtkFor_LR}}, {{Mental_AtkFor_LR}}, LR);
+AtkMidBwd = [pos[CL] == 1]Mid(75, 66, 69, 82, 74, CL) [] [pos[CR] == 1]Mid(76, 67, 60, 82, 0, CR);
+AtkMidFwd = [pos[RL] == 1]Mid(72, 58, 77, 24, 0, RL) [] [pos[C] == 1]Mid(68, 63, 57, 45, 0, C) [] [pos[LR] == 1]Mid(72, 58, 77, 24, 0, LR);
+AtkMid = [pos[RL] == 1]Mid(0, 0, 0, 0, 0, RL) [] [pos[C] == 1]Mid(0, 0, 0, 0, 0, C) [] [pos[LR] == 1]Mid(0, 0, 0, 0, 0,LR);
+AtkFor = [pos[RL] == 1]For(0, 0, 0, 0, 0, 0, RL) [] [pos[C] == 1]For(62, 57, 63, 54, 45, 0,C) [] [pos[LR] == 1]For(0, 0, 0, 0, 0, 0, LR);
 
 ///////////// HOME TEAM PLAYERS (Defending Team) /////////////
 // Home team defenders, midfielders and forwards are already implicitly "defending" via the prob. to lose the ball parameter
-DefKep = [pos[C] == 1]Kep_2({{Save_DefKep}}, {{Mental_DefKep}}, C);
+DefKep = [pos[C] == 1]Kep_2(226, 0, C);
 
 ///////////// Individual Positions /////////////
 // There is a guard to every action (e.g., shortPass) a player can take

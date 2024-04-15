@@ -1,5 +1,6 @@
 from jinja2 import Template
 import os
+import pandas as pd
 
 parameters = {
     'ShortPass_AtkKep' : 0,
@@ -81,7 +82,56 @@ parameters = {
     "LongShot_AtkMidFwd_lr": 0, 
     "LoseBall_AtkMidFwd_lr": 0, 
     "Mental_AtkMidFwd_lr" : 0,
+    "atkKepPos": " 0, 0, 0, 1, 0, 0, 0,",
+    "atkDefPos": "1, 0, 1, 0, 1, 0, 1,",
+    "atkMidBwdPos" :  "0, 0, 1, 0, 1, 0, 0,",
+    "atkMidFwdPos" : " 0, 1, 0, 1, 0, 1, 0,",
+    "atkForPos": "0, 1, 0, 1, 0, 1, 0,"
 }
+
+def group_list(numbers, items):
+    grouped = []
+    start = 0
+    for number in numbers:
+        end = start + number
+        grouped.append(tuple(items[start:end]))
+        start = end
+    return grouped
+
+formation_dfs = dict()
+def change_formation(season : str, url : str):
+    df = None
+    if season not in formation_dfs:
+        formation_dfs[season] = pd.read_csv(os.path.join("formations", f"epl_matches_{season}.csv"))
+    df = formation_dfs[season]
+        
+    matching_row = df[df['match_url'] == url]
+    away_formation = matching_row['away_formation'].iloc[0].split("-")
+    away_formation = [int(number) for number in away_formation]
+    away_sequence = matching_row['away_sequence'].iloc[0].split(",")
+    
+    away_sequence = group_list(away_formation, away_sequence)
+    
+    params = ["atkKepPos", "atkDefPos", "atkMidBwdPos", "atkMidFwdPos", "atkForPos"]
+    for param, row in zip(params, away_sequence):
+        positions = ["L", "LR", "CL", "C", "CR", "RL", "R"]
+        for elem in row:
+            positions = [1 if element == elem else element for element in positions]    
+        positions = [0 if isinstance(item, str) else item for item in positions]
+        positions = [str(item) for item in positions]
+        positions = ", ".join(positions) + ", "
+        parameters[param] = positions
+
+#     var atkKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
+# var atkDefPos = [-1(6), 1, 0, 1, 0, 1, 0, 1, -1(6)];
+# var atkMidBwdPos = [-1(6), 0, 0, 1, 0, 1, 0, 0, -1(6)]; 
+# var atkMidFwdPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
+# var atkForPos = [-1(6), 0, 1, 0, 1, 0, 1, 0, -1(6)];
+# var defKepPos = [-1(6), 0, 0, 0, 1, 0, 0, 0, -1(6)];
+    
+
+
+    
 
 
 
@@ -263,45 +313,15 @@ def initialize_home_team_params(home_team_players):
         
         for position in player_positions:
             if position == "GK":
-                parameters["ShortPass_AtkKep"] = int(player["attacking_short_passing"])
-                parameters["LongPass_DefKep"] = int(player["skill_long_passing"])
+                parameters["Save_DefKep"] = int(int(player["goalkeeping_diving"]) + int(player["goalkeeping_handling"]) + int(player["goalkeeping_kicking"]) +  int(player["goalkeeping_positioning"]) +  int(player["goalkeeping_reflexes"]) / 4)
                 parameters["Mental_DefKep"] = int(player["mentality_composure"])
             
-            elif position == "LCB":
-                parameters["ShortPass_AtkDef_cl"] = int(player["attacking_short_passing"])
-                parameters["LongPass_AtkDef_cl"] = int(player["skill_long_passing"])
-                parameters["BallLosePass_AtkDef_cl"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                parameters["Mental_AtkDef_cl"] = int(player["mentality_composure"])
-            
-            elif  position == "CB":
-                
-                if parameters["ShortPass_AtkDef_cl"] == 0:
-                    parameters["ShortPass_AtkDef_cl"] = int(player["attacking_short_passing"])
-                    parameters["LongPass_AtkDef_cl"] = int(player["skill_long_passing"])
-                    parameters["BallLosePass_AtkDef_cl"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                    parameters["Mental_AtkDef_cl"] = int(player["mentality_composure"])
-                else:
-                    parameters["ShortPass_AtkDef_cr"] = int(player["attacking_short_passing"])
-                    parameters["LongPass_AtkDef_cr"] = int(player["skill_long_passing"])
-                    parameters["BallLosePass_AtkDef_cr"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                    parameters["Mental_AtkDef_cr"] = int(player["mentality_composure"])
-                    
-            
-            elif  position == "LCB":
-                parameters["ShortPass_AtkDef_cr"] = int(player["attacking_short_passing"])
-                parameters["LongPass_AtkDef_cr"] = int(player["skill_long_passing"])
-                parameters["BallLosePass_AtkDef_cr"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                parameters["Mental_AtkDef_cr"] = int(player["mentality_composure"])
-            
-            elif position == "RB":
-                parameters["ShortPass_AtkDef_r"] = int(player["attacking_short_passing"])
-                parameters["LongPass_AtkDef_r"] = int(player["skill_long_passing"])
-                parameters["BallLosePass_AtkDef_r"] = int((int(player["defending_standing_tackle"]) + int(player["defending_sliding_tackle"]) + int(player["mentality_interceptions"])) / 3)
-                parameters["Mental_AtkDef_r"] = int(player["mentality_composure"])
-            
-                
-            
+          
 
 def initialize_params(home_team_players, attack_team_players):
     initialize_attack_team_params(attack_team_players)
     initialize_home_team_params(home_team_players)
+    
+
+if __name__ == "__main__":
+    change_formation("20152016", "https://www.premierleague.com/match/12313")

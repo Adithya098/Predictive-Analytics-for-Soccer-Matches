@@ -14,7 +14,7 @@ def calculate_softmax(parsed_values):
     # softmax_value = np.exp(average_probabilities) / np.sum(np.exp(average_probabilities), axis=0)
     
     
-    high, low = parsed_values["Goal0"]
+    high, low = parsed_values["Goal1"]
     softmax_value = math.exp((high + low) / 2) / (math.exp(high) + math.exp(low))
     
     

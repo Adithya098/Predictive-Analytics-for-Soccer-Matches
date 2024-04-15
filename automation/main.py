@@ -6,12 +6,24 @@ from db import DatabaseConnection
 from pprint import pprint
 from teams import find_most_similar
 from tqdm import tqdm
-from pcsp_generator import change_parameter, render, save_file, remove_render, initialize_params
+from pcsp_generator import change_parameter, render, save_file, remove_render, initialize_params, change_formation
 from softmax import calculate_softmax
 from probability import get_probability_file_name
 from cli import get_parser
 from config import SAMPLE_SIZE, RANDOM_SEED
 from simulate import simulate_betting
+
+
+def extract_years_from_path(file_path):
+    # Split the path and take the last part (filename)
+    filename = file_path.split('/')[-1]
+    # Extract the starting year part
+    start_year = filename.split('.')[0][0:2]
+    # Extract the ending year part
+    end_year = filename.split('.')[0][2:]
+    # Concatenate to form the '20162017' format
+    years = f"20{start_year}20{end_year}"
+    return years
 
 def main():
     parser = get_parser()
@@ -30,6 +42,8 @@ def main():
             
             try:
                 url = row['match_url']
+                
+                change_formation(extract_years_from_path(csv_file), url)
                 
                 # find the teams
                 soup = send_request(url)
@@ -61,7 +75,7 @@ def main():
                 delete_output_file()
                 
                 #remove render
-                remove_render()
+                # remove_render()
                 
                 # parse the output
                 parsed_output = parse_output(output)
