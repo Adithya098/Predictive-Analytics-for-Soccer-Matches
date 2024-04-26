@@ -10,7 +10,7 @@ Leveraging past years’ match data, the PAT model employs advanced statistical 
 
 ### Prerequisites
 
-- Install PAT execution file according to your operating system.
+- Install/Download PAT execution file according to your operating system.
 - Ensure Python (or Python3) and pip (or pip3) are installed on your system.
 
 ### Installation
